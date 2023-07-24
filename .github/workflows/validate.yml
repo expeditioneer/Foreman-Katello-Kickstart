@@ -22,4 +22,4 @@ jobs:
     
     - name: Validate Kickstart file
       run: |
-        ksvalidator ks.cfg
+        ksvalidator --version RHEL8 ks.cfg
