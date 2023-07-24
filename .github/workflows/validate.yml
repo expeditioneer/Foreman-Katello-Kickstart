@@ -1,0 +1,25 @@
+---
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    
+    - name: Checkout repository
+      uses: actions/checkout@main
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@main
+      with:
+        python-version: 3.11
+    
+    - name: Install Python module for manipulating kickstart files
+      run: |
+        python -m pip install --upgrade pip
+        pip install pykickstart requests
+    
+    - name: Validate Kickstart file
+      run: |
+        ksvalidator ks.cfg
