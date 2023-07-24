@@ -1,5 +1,5 @@
 # Foreman Katello Kickstart
-[![Open Source Love svg2](https://badges.frapsoft.com/os/v2/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
+[![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.png?v=103)](https://github.com/ellerbrock/open-source-badges/)
 
 This repository contains a Kickstart file to create the necessary base system for a [Foreman](https://www.theforeman.org/) installation with the [Katello](https://theforeman.org/plugins/katello/) plugin.
 
