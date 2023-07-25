@@ -4,6 +4,9 @@
 
 This repository contains a Kickstart file to create the necessary base system for a [Foreman](https://www.theforeman.org/) installation with the [Katello](https://theforeman.org/plugins/katello/) plugin.
 
+With this kickstart file an `OEMDRV.iso` is created and attached to the individual releases.
+This ISO should be present as disc during the installation for a fully automated / unattended installation.
+
 This is tailored to be used when installing Foreman as a Virtual Machine on [libvirt](https://libvirt.org/).
 
 ## System / VM requirements
