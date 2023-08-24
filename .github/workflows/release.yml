@@ -1,0 +1,100 @@
+---
+
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  create_artifacts:
+    strategy:
+      matrix:
+        distribution: [ AlmaLinux, RedHat ]
+
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install package
+        run: |
+          sudo apt-get --assume-yes install mkisofs
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@main
+        with:
+          python-version: 3.11
+
+      - name: Install Python module for manipulating kickstart files
+        run: |
+          python -m pip install --upgrade pip
+          pip install --requirement requirements.txt
+
+      - name: Create Kickstart config from jinja template
+        run: |
+          jinja --data distribution/${{ matrix.distribution }}.json ks.cfg.j2 --output ks.cfg
+          jinja --data distribution/${{ matrix.distribution }}.json ks.cfg.j2 --output ks_${{ matrix.distribution }}.cfg
+
+      - name: Create ISO-9660 filesystem-image of kickstart file
+        run: |
+          mkisofs -volid OEMDRV -output OEMDRV_${{ matrix.distribution }}.iso ks.cfg
+
+      - name: Stash generated ISO
+        uses: actions/upload-artifact@v3
+        with:
+          name: OEMDRV_${{ matrix.distribution }}.iso
+          path: ./
+          retention-days: 1
+
+      - name: Stash generated Kickstart file
+        uses: actions/upload-artifact@v3
+        with:
+          name: ks_${{ matrix.distribution }}.cfg
+          path: ./
+          retention-days: 1
+
+  create_release:
+    needs: create_artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          generate_release_notes: true
+
+  add_artifacts_to_release:
+    strategy:
+      matrix:
+        distribution: [ AlmaLinux, RedHat ]
+    needs: [ create_artifacts, create_release ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pop generated Kickstart file
+        uses: actions/download-artifact@master
+        with:
+          name: ks_${{ matrix.distribution }}.cfg
+          path: ./
+
+      - name: Pop generated ISO
+        uses: actions/download-artifact@v3
+        with:
+          name: OEMDRV_${{ matrix.distribution }}.iso
+          path: ./
+
+      - name: Upload generated Kickstart file to GitHub release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          file: ks_${{ matrix.distribution }}.cfg
+          tag: ${{ github.ref }}
+
+
+      - name: Upload generated ISO to GitHub release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          file: OEMDRV_${{ matrix.distribution }}.iso
+          tag: ${{ github.ref }}
