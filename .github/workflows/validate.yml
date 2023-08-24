@@ -3,7 +3,11 @@
 on: [push]
 
 jobs:
-  build:
+  ci:
+    strategy:
+      matrix:
+        distribution:  [AlmaLinux, RedHat]
+
     runs-on: ubuntu-latest
     steps:
     
@@ -19,7 +23,11 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    
+
+    - name: Create Kickstart config from jinja template
+      run: |
+         jinja -d distribution/${{matrix.distribution}}.json ks.cfg.j2 --output ks.cfg
+
     - name: Validate Kickstart file
       run: |
         ksvalidator --version RHEL8 ks.cfg

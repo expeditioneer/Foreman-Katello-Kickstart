@@ -1,0 +1,64 @@
+cmdline
+
+%packages
+@core
+kexec-tools
+langpacks-de
+langpacks-en
+python36
+-microcode_ctl
+-iwl*firmware
+-plymouth
+%end
+
+keyboard --xlayouts='de'
+lang en_US.UTF-8
+
+network  --bootproto=static --device=enp1s0 --ethtool="autoneg on" --gateway=172.16.100.254 --ip=172.16.100.20 --nameserver=172.16.100.254 --netmask=255.255.255.0 --noipv6 --activate --hostname={{ hostname }}
+
+eula --agreed
+
+{% if url is defined %}url --url="{{ url }}"{% endif %}
+{% if repo is defined %}repo --name="AppStream" --baseurl="{{ repo }}"{% endif %}
+
+firstboot --disable
+
+ignoredisk --only-use=vda
+clearpart --initlabel --all
+partition /boot/efi --fstype="efi" --ondisk=vda --size=512 --fsoptions="umask=0077,shortname=winnt"
+partition /boot --fstype="xfs" --ondisk=vda --size=1024
+partition pv.01 --fstype="lvmpv" --ondisk=vda --grow #--size=86024
+volgroup {{ vgname }} pv.01
+logvol / --fstype="xfs" --size=8192 --name=root --vgname={{ vgname }}
+logvol /home --fstype="xfs" --size=1024 --name=home --vgname={{ vgname }}
+logvol /var/lib/pgsql --fstype="xfs" --size=20480 --name=var_lib_pgsql --vgname={{ vgname }}
+logvol /var/lib/pulp --fstype="xfs" --size=51200 --name=var_lib_pulp --vgname={{ vgname }}
+logvol /var/log --fstype="xfs" --size=1024 --name=var_log --vgname={{ vgname }}
+logvol /var/log/audit --fstype="xfs" --size=1024 --name=var_log_audit --vgname={{ vgname }}
+logvol /var/tmp --fstype="xfs" --size=1024 --name=var_tmp --vgname={{ vgname }}
+logvol swap --fstype="swap" --size=2048 --name=swap --vgname={{ vgname }}
+
+timezone Europe/Berlin --utc --ntpservers=172.16.100.254
+
+services --enabled=tmp.mount
+
+rootpw --plaintext {{ rootpw }}
+sshkey --user root "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPzC1siqNv0h4YvOrJT7EjxZ1jdLF03hFC/wDYlAO5fZ {{ hostname }}"
+
+%addon com_redhat_kdump --disable
+%end
+
+%anaconda
+pwpolicy root --minlen=6 --minquality=1 --notstrict --nochanges --notempty
+pwpolicy user --minlen=6 --minquality=1 --notstrict --nochanges --emptyok
+pwpolicy luks --minlen=6 --minquality=1 --notstrict --nochanges --notempty
+%end
+
+%post --interpreter=/usr/bin/bash --erroronfail
+sed --in-place --expression="s/ rhgb quiet//g" /etc/default/grub
+grub2-mkconfig --output=/etc/grub2-efi.cfg
+%end
+
+%post --interpreter=/usr/bin/bash --erroronfail
+sed --in-place --expression="s/^PermitRootLogin yes/PermitRootLogin prohibit-password/g" /etc/ssh/sshd_config
+%end
