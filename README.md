@@ -3,11 +3,15 @@
 [![GPL Licence](https://badges.frapsoft.com/os/gpl/gpl.png?v=103)](https://opensource.org/licenses/GPL-3.0/)
 
 This repository contains a Kickstart file to create the necessary base system for a [Foreman](https://www.theforeman.org/) installation with the [Katello](https://theforeman.org/plugins/katello/) plugin.
+Also, a Kickstart file the necessary base system for a [RedHat Satellite](https://www.redhat.com/technologies/management/satellite) installation is created.
 
-With this kickstart file an `OEMDRV.iso` is created and attached to the individual releases.
+With these kickstart files an ISO is created for each distribution and attached to the individual releases.
 This ISO should be present as disc during the installation for a fully automated / unattended installation.
+The corresponding ISO must be renamed to **OEMDRV.iso** when attached to the system.
 
-This is tailored to be used when installing Foreman as a Virtual Machine on [libvirt](https://libvirt.org/).
+This is tailored to be used when installing Foreman/Satellite as a Virtual Machine on [libvirt](https://libvirt.org/).
+
+For a RedHat installation the DVD ISO is required, it will not work with the minimal / boot ISO.
 
 ## System / VM requirements
 The VM should have at least _88GiB_ on the `vda` disk.
@@ -39,7 +43,7 @@ NAMESERVER: 172.16.100.254
 IPv6 is disabled on the interface.
 
 ### Hostname
-The hostname is **foreman.management.internal**
+The hostname is either **satellite.management.internal** or **foreman.management.internal**
 
 ### NTP Server
 Set Timezone is `Europe/Berlin` and the NTP Server is set to `172.16.100.254`.
@@ -50,7 +54,7 @@ Please change the pre-set passwords as soon as possible. These are only inteded 
 immediately.
 
 ### Password
-For the root user the pre-set password is `almalinux`
+For the root user the pre-set password is either `almalinux` or `redhat`.
 
 ### SSH Key
 Remote login for the root user is only allowed with an SSH-Key (prohibit-password) where the details are listed below
@@ -68,5 +72,12 @@ AAAEBL/pYo4CGMibFrzV2LU5Ka2B2yRtx57uWjSymJ4dh8bvzC1siqNv0h4YvOrJT7EjxZ
 
 _Public Key_ (already present in authorized_keys of user root)
 ```
-ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPzC1siqNv0h4YvOrJT7EjxZ1jdLF03hFC/wDYlAO5fZ foreman.management.internal
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPzC1siqNv0h4YvOrJT7EjxZ1jdLF03hFC/wDYlAO5fZ _COMMENT_
 ```
+where _\_COMMENT__ is either `satellite.management.internal` or `foreman.management.internal`.
+
+## Links
+
+Additional documentation and Links can 
+
+- [Kickstart commands and options reference](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/performing_an_advanced_rhel_8_installation/kickstart-commands-and-options-reference_installing-rhel-as-an-experienced-user#addon-com_redhat_kdump_kickstart-commands-for-addons-supplied-with-the-rhel-installation-program)

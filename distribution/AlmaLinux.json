@@ -1,0 +1,7 @@
+{
+    "hostname": "foreman.management.internal",
+    "rootpw": "almalinux",
+    "url": "https://repo.almalinux.org/almalinux/8/BaseOS/x86_64/os/",
+    "repo": "https://repo.almalinux.org/almalinux/8/AppStream/x86_64/os/",
+    "vgname": "foreman"
+}
