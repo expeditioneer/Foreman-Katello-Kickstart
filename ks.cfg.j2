@@ -31,6 +31,7 @@ partition pv.01 --fstype="lvmpv" --ondisk=vda --grow #--size=86024
 volgroup {{ vgname }} pv.01
 logvol / --fstype="xfs" --size=8192 --name=root --vgname={{ vgname }}
 logvol /home --fstype="xfs" --size=1024 --name=home --vgname={{ vgname }}
+logvol /var --fstype="xfs" --size=4096 --name=var --vgname={{ vgname }}
 logvol /var/lib/pgsql --fstype="xfs" --size=20480 --name=var_lib_pgsql --vgname={{ vgname }}
 logvol /var/lib/pulp --fstype="xfs" --size=51200 --name=var_lib_pulp --vgname={{ vgname }}
 logvol /var/log --fstype="xfs" --size=1024 --name=var_log --vgname={{ vgname }}
