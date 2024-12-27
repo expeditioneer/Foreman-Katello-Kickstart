@@ -17,7 +17,7 @@ jobs:
     steps:
 
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -25,10 +25,10 @@ jobs:
         run: |
           sudo apt-get --assume-yes install mkisofs
 
-      - name: Set up Python 3.11
-        uses: actions/setup-python@main
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.11
+          python-version: 3.13
 
       - name: Install Python module for manipulating kickstart files
         run: |
@@ -37,22 +37,21 @@ jobs:
 
       - name: Create Kickstart config from jinja template
         run: |
-          jinja --data distribution/${{ matrix.distribution }}.json ks.cfg.j2 --output ks.cfg
           jinja --data distribution/${{ matrix.distribution }}.json ks.cfg.j2 --output ks_${{ matrix.distribution }}.cfg
 
       - name: Create ISO-9660 filesystem-image of kickstart file
         run: |
-          mkisofs -volid OEMDRV -output OEMDRV_${{ matrix.distribution }}.iso ks.cfg
+          mkisofs -volid OEMDRV -output OEMDRV_${{ matrix.distribution }}.iso ks_${{ matrix.distribution }}.cfg
 
       - name: Stash generated ISO
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: OEMDRV_${{ matrix.distribution }}.iso
           path: ./
           retention-days: 1
 
       - name: Stash generated Kickstart file
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ks_${{ matrix.distribution }}.cfg
           path: ./
@@ -75,13 +74,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Pop generated Kickstart file
-        uses: actions/download-artifact@master
+        uses: actions/download-artifact@v4
         with:
           name: ks_${{ matrix.distribution }}.cfg
           path: ./
 
       - name: Pop generated ISO
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: OEMDRV_${{ matrix.distribution }}.iso
           path: ./

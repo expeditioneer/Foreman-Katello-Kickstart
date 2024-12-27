@@ -78,6 +78,6 @@ where _\_COMMENT__ is either `satellite.management.internal` or `foreman.managem
 
 ## Links
 
-Additional documentation and Links can 
+Additional documentation and Links for further information
 
 - [Kickstart commands and options reference](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/performing_an_advanced_rhel_8_installation/kickstart-commands-and-options-reference_installing-rhel-as-an-experienced-user#addon-com_redhat_kdump_kickstart-commands-for-addons-supplied-with-the-rhel-installation-program)
