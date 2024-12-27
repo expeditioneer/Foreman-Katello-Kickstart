@@ -35,5 +35,4 @@ jobs:
 
     - name: Validate Kickstart file
       run: |
-        ksvalidator --listversions
-        ksvalidator --version RHEL8 ks.cfg
+        ksvalidator --version RHEL9 ks.cfg
