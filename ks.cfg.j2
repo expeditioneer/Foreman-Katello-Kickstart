@@ -39,7 +39,8 @@ logvol /var/log/audit --fstype="xfs" --size=1024 --name=var_log_audit --vgname={
 logvol /var/tmp --fstype="xfs" --size=1024 --name=var_tmp --vgname={{ vgname }}
 logvol swap --fstype="swap" --size=2048 --name=swap --vgname={{ vgname }}
 
-timezone Europe/Berlin --utc --ntpservers=172.16.100.254
+timezone Europe/Berlin --utc
+timesource --ntp-server 172.16.100.254
 
 services --enabled=tmp.mount
 
